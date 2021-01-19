@@ -28,7 +28,7 @@ class JssEnv(gym.Env):
         :param env_config: Ray dictionary of config parameter
         """
         if env_config is None:
-            env_config = {'instance_path': Path(__file__).parent.absolute() + '/instances/ta80'}
+            env_config = {'instance_path': str(Path(__file__).parent.absolute()) + '/instances/ta80'}
         instance_path = env_config['instance_path']
 
         # initial values for variables used for instance
