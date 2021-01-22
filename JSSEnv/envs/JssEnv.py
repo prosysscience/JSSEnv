@@ -96,6 +96,10 @@ class JssEnv(gym.Env):
         assert self.instance_matrix is not None
         # allocate a job + one to wait
         self.action_space = gym.spaces.Discrete(self.jobs + 1)
+        # used for plotting
+        self.colors = [
+            tuple([random.random() for i in range(3)]) for _ in range(self.machines)
+        ]
         '''
         matrix with the following attributes for each job:
             -Legal job
@@ -358,10 +362,8 @@ class JssEnv(gym.Env):
         fig = None
         if len(df) > 0:
             df = pd.DataFrame(df)
-            colors = [
-                tuple([random.random() for i in range(3)]) for _ in range(self.machines)
-            ]
-            fig = ff.create_gantt(df, index_col='Resource', colors=colors, show_colorbar=True,
+
+            fig = ff.create_gantt(df, index_col='Resource', colors=self.colors, show_colorbar=True,
                                   group_tasks=True)
             fig.update_yaxes(autorange="reversed")  # otherwise tasks are listed from the bottom up
         return fig
