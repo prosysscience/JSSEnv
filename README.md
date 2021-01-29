@@ -16,7 +16,7 @@ cd JSSEnv
 python setup.py
 ```
 
-Once installed, the environment will be available in your OpenAi's gym environment:
+Once installed, the environment will be available in your OpenAi's gym environment and can be used to train a reinforcement learning agent:
 
 ```python
 import gym
