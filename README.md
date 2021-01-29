@@ -47,3 +47,6 @@ Project Organization
                                  legal in our environment.
 --------
 
+## License
+
+MIT License
