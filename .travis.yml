@@ -3,7 +3,7 @@ python:
   - "3.8"
 install:
   - python3 -m pip install kaleido
-  - pip install .
+  - pip install -e .
 script:
   - cd tests
   - pytest
