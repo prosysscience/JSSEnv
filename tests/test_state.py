@@ -1,12 +1,12 @@
 import gym
-
 import unittest
 import numpy as np
+
 
 class TestState(unittest.TestCase):
 
     def test_random(self):
-        env = gym.make('jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
+        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
         average = 0
         for _ in range(100):
             state = env.reset()
@@ -23,7 +23,8 @@ class TestState(unittest.TestCase):
                 if env.legal_actions[job]:
                     machine_needed = env.needed_machine_jobs[job]
                     machines_available.add(machine_needed)
-            self.assertEqual(len(machines_available), env.nb_machine_legal, "machine available and nb machine available are not coherant")
+            self.assertEqual(len(machines_available), env.nb_machine_legal,
+                             "machine available and nb machine available are not coherant")
             while not done:
                 actions = np.random.choice(len(legal_actions), 1, p=(legal_actions / legal_actions.sum()))[0]
                 assert legal_actions[:-1].sum() == env.nb_legal_actions
@@ -42,6 +43,6 @@ class TestState(unittest.TestCase):
                 assert len(machines_available) == env.nb_machine_legal
             average += env.last_time_step
             self.assertEqual(len(env.next_time_step), 0)
-            self.assertNotEqual(min(env.solution.flatten()),  -1, np.array2string(env.solution.flatten()))
+            self.assertNotEqual(min(env.solution.flatten()), -1, np.array2string(env.solution.flatten()))
             for job in range(env.jobs):
                 self.assertEqual(env.todo_time_step_job[job], env.machines)

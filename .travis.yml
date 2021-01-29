@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.8"
+install:
+  - python3 -m pip install kaleido
+  - pip install .
+script:
+  - cd tests
+  - pytest
+after_success:
+  - codecov
