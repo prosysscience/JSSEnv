@@ -56,6 +56,7 @@ class JssEnv(gym.Env):
         self.idle_time_jobs_last_op = None
         self.state = None
         self.illegal_actions = None
+        self.action_illegal_no_op = None
         self.machine_legal = None
         # initial values for variables used for representation
         self.start_timestamp = datetime.datetime.now().timestamp()
@@ -98,7 +99,7 @@ class JssEnv(gym.Env):
         self.action_space = gym.spaces.Discrete(self.jobs + 1)
         # used for plotting
         self.colors = [
-            tuple([random.random() for i in range(3)]) for _ in range(self.machines)
+            tuple([random.random() for _ in range(3)]) for _ in range(self.machines)
         ]
         '''
         matrix with the following attributes for each job:
@@ -144,7 +145,7 @@ class JssEnv(gym.Env):
         self.total_idle_time_jobs = np.zeros(self.jobs, dtype=np.int)
         self.idle_time_jobs_last_op = np.zeros(self.jobs, dtype=np.int)
         self.illegal_actions = np.zeros((self.machines, self.jobs), dtype=np.bool)
-        self.action_illegal = np.zeros(self.jobs, dtype=np.bool)
+        self.action_illegal_no_op = np.zeros(self.jobs, dtype=np.bool)
         self.machine_legal = np.zeros(self.machines, dtype=np.bool)
         for job in range(self.jobs):
             needed_machine = self.instance_matrix[job][0][0]
@@ -155,7 +156,7 @@ class JssEnv(gym.Env):
         self.state = np.zeros((self.jobs, 7), dtype=np.float)
         return self._get_current_state_representation()
 
-    def _priorization_non_final(self):
+    def _prioritization_non_final(self):
         if self.nb_machine_legal >= 1:
             for machine in range(self.machines):
                 if self.machine_legal[machine]:
@@ -200,7 +201,8 @@ class JssEnv(gym.Env):
                     max_horizon = max(max_horizon, max_horizon_machine[machine_needed])
             for job in range(self.jobs):
                 if not self.legal_actions[job]:
-                    if self.time_until_finish_current_op_jobs[job] > 0 and self.todo_time_step_job[job] + 1 < self.machines:
+                    if self.time_until_finish_current_op_jobs[job] > 0 and \
+                            self.todo_time_step_job[job] + 1 < self.machines:
                         time_step = self.todo_time_step_job[job] + 1
                         time_needed = self.current_time_step + self.time_until_finish_current_op_jobs[job]
                         while time_step < self.machines - 1 and max_horizon > time_needed:
@@ -212,7 +214,7 @@ class JssEnv(gym.Env):
                                     return
                             time_needed += self.instance_matrix[job][time_step][1]
                             time_step += 1
-                    elif not self.action_illegal[job] and self.todo_time_step_job[job] < self.machines:
+                    elif not self.action_illegal_no_op[job] and self.todo_time_step_job[job] < self.machines:
                         time_step = self.todo_time_step_job[job]
                         machine_needed = self.instance_matrix[job][time_step][0]
                         time_needed = self.current_time_step + self.time_until_available_machine[machine_needed]
@@ -237,11 +239,11 @@ class JssEnv(gym.Env):
                     needed_machine = self.needed_machine_jobs[job]
                     self.machine_legal[needed_machine] = False
                     self.illegal_actions[needed_machine][job] = True
-                    self.action_illegal[job] = True
+                    self.action_illegal_no_op[job] = True
             while self.nb_machine_legal == 0:
                 reward -= self._increase_time_step()
             scaled_reward = self._reward_scaler(reward)
-            self._priorization_non_final()
+            self._prioritization_non_final()
             self._check_no_op()
             return self._get_current_state_representation(), scaled_reward, self._is_done(), {}
         else:
@@ -266,12 +268,12 @@ class JssEnv(gym.Env):
             self.machine_legal[machine_needed] = False
             for job in range(self.jobs):
                 if self.illegal_actions[machine_needed][job]:
-                    self.action_illegal[job] = False
+                    self.action_illegal_no_op[job] = False
                     self.illegal_actions[machine_needed][job] = False
             # if we can't allocate new job in the current timestep, we pass to the next one
             while self.nb_machine_legal == 0 and len(self.next_time_step) > 0:
                 reward -= self._increase_time_step()
-            self._priorization_non_final()
+            self._prioritization_non_final()
             self._check_no_op()
             # we then need to scale the reward
             scaled_reward = self._reward_scaler(reward)
@@ -281,11 +283,11 @@ class JssEnv(gym.Env):
         return reward / self.max_time_op
 
     def _increase_time_step(self):
-        '''
+        """
         The heart of the logic his here, we need to increase every counter when we have a nope action called
         and return the time elapsed
         :return: time elapsed
-        '''
+        """
         hole_planning = 0
         next_time_step_to_pick = self.next_time_step.pop(0)
         self.next_jobs.pop(0)
@@ -310,10 +312,11 @@ class JssEnv(gym.Env):
                     if self.todo_time_step_job[job] < self.machines:
                         self.needed_machine_jobs[job] = self.instance_matrix[job][self.todo_time_step_job[job]][0]
                         self.state[job][4] = max(0, self.time_until_available_machine[
-                                                 self.needed_machine_jobs[job]] - difference) / self.max_time_op
+                            self.needed_machine_jobs[job]] - difference) / self.max_time_op
                     else:
                         self.needed_machine_jobs[job] = -1
-                        # this allow to have 1 is job is over (not 0 because, 0 strongly indicate that the job is a good candidate)
+                        # this allow to have 1 is job is over (not 0 because, 0 strongly indicate that the job is a
+                        # good candidate)
                         self.state[job][4] = 1.0
                         if self.legal_actions[job]:
                             self.legal_actions[job] = False
@@ -331,7 +334,8 @@ class JssEnv(gym.Env):
                 machine] - difference)
             if self.time_until_available_machine[machine] == 0:
                 for job in range(self.jobs):
-                    if self.needed_machine_jobs[job] == machine and not self.legal_actions[job] and not self.illegal_actions[machine][job]:
+                    if self.needed_machine_jobs[job] == machine and not self.legal_actions[job] and not \
+                            self.illegal_actions[machine][job]:
                         self.legal_actions[job] = True
                         self.nb_legal_actions += 1
                         if not self.machine_legal[machine]:
@@ -362,7 +366,6 @@ class JssEnv(gym.Env):
         fig = None
         if len(df) > 0:
             df = pd.DataFrame(df)
-
             fig = ff.create_gantt(df, index_col='Resource', colors=self.colors, show_colorbar=True,
                                   group_tasks=True)
             fig.update_yaxes(autorange="reversed")  # otherwise tasks are listed from the bottom up

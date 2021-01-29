@@ -1,4 +1,4 @@
-from JSSEnv.envs import JssEnv
+import gym
 
 import unittest
 import numpy as np
@@ -6,7 +6,7 @@ import numpy as np
 class TestState(unittest.TestCase):
 
     def test_random(self):
-        env = JssEnv({'instance_path': '../JSSEnv/envs/instances/ta80'})
+        env = gym.make('jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
         average = 0
         for _ in range(100):
             state = env.reset()

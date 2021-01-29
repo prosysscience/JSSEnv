@@ -1,6 +1,8 @@
 import os
 import tempfile
 
+import gym
+
 from JSSEnv.envs import JssEnv
 
 import unittest
@@ -10,7 +12,7 @@ class TestRendering(unittest.TestCase):
 
     def test_optimum_ta01_gif(self):
         # http://optimizizer.com/solution.php?name=ta01&UB=1231&problemclass=ta
-        env = JssEnv({'instance_path': '../JSSEnv/envs/instances/ta01'})
+        env = gym.make('jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta01'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -34,7 +36,7 @@ class TestRendering(unittest.TestCase):
         done = False
         job_nb = len(solution_sequence[0])
         machine_nb = len(solution_sequence)
-        index_machine = [0 for x in range(machine_nb)]
+        index_machine = [0 for _ in range(machine_nb)]
         step_nb = 0
         images = []
         while not done:
