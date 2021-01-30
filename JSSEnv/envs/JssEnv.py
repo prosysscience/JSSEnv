@@ -60,6 +60,7 @@ class JssEnv(gym.Env):
         self.machine_legal = None
         # initial values for variables used for representation
         self.start_timestamp = datetime.datetime.now().timestamp()
+        self.sum_op = 0
         instance_file = open(instance_path, 'r')
         line_str = instance_file.readline()
         line_cnt = 1
@@ -84,6 +85,7 @@ class JssEnv(gym.Env):
                     self.instance_matrix[job_nb][i // 2] = (machine, time)
                     self.max_time_op = max(self.max_time_op, time)
                     self.jobs_length[job_nb] += time
+                    self.sum_op += time
                     i += 2
             line_str = instance_file.readline()
             line_cnt += 1
@@ -304,9 +306,9 @@ class JssEnv(gym.Env):
                 self.state[job][3] = self.total_perform_op_time_jobs[job] / self.max_time_jobs
                 if self.time_until_finish_current_op_jobs[job] == 0:
                     self.total_idle_time_jobs[job] += (difference - was_left_time)
-                    self.state[job][6] = self.total_idle_time_jobs[job] / (self.max_time_jobs * self.jobs)
+                    self.state[job][6] = self.total_idle_time_jobs[job] / self.sum_op
                     self.idle_time_jobs_last_op[job] = (difference - was_left_time)
-                    self.state[job][5] = self.idle_time_jobs_last_op[job] / (self.max_time_jobs * self.jobs)
+                    self.state[job][5] = self.idle_time_jobs_last_op[job] / self.sum_op
                     self.todo_time_step_job[job] += 1
                     self.state[job][2] = self.todo_time_step_job[job] / self.machines
                     if self.todo_time_step_job[job] < self.machines:
@@ -324,8 +326,8 @@ class JssEnv(gym.Env):
             elif self.todo_time_step_job[job] < self.machines:
                 self.total_idle_time_jobs[job] += difference
                 self.idle_time_jobs_last_op[job] += difference
-                self.state[job][5] = self.idle_time_jobs_last_op[job] / (self.max_time_jobs * self.jobs)
-                self.state[job][6] = self.total_idle_time_jobs[job] / (self.max_time_jobs * self.jobs)
+                self.state[job][5] = self.idle_time_jobs_last_op[job] / self.sum_op
+                self.state[job][6] = self.total_idle_time_jobs[job] / self.sum_op
         for machine in range(self.machines):
             if self.time_until_available_machine[machine] < difference:
                 empty = difference - self.time_until_available_machine[machine]
