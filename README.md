@@ -11,9 +11,7 @@ Getting Started
 To start working with this environment you simply need to clone and install it:
 
 ```shell
-git clone LINK_TO_REPOSITORY
-cd JSSEnv
-pip install -e .
+pip install JSSEnv==1.0.0
 ```
 
 Once installed, the environment will be available in your OpenAi's gym environment and can be used to train a reinforcement learning agent:
