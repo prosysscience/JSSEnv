@@ -8,7 +8,7 @@ An optimized OpenAi gym's environment to simulate the [Job-Shop Scheduling probl
 Getting Started
 ------------
 
-To start working with this environment you simply need to clone and install it:
+This repository is available as a pip package:
 
 ```shell
 pip install JSSEnv==1.0.0
