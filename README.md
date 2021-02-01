@@ -1,4 +1,4 @@
-Job-Shop Scheduling Environment [![Build Status](https://travis-ci.com/ingambe/JSSEnv.svg?token=bPABRGzbzQ2JTRTjgRJn&branch=master)](https://travis-ci.com/ingambe/JSSEnv)
+Job-Shop Scheduling Environment [![Build Status](https://travis-ci.com/prosysscience/JSSEnv.svg?token=bPABRGzbzQ2JTRTjgRJn&branch=master)](https://travis-ci.com/prosysscience/JSSEnv)
 ==============================
 
 An optimized OpenAi gym's environment to simulate the [Job-Shop Scheduling problem](https://developers.google.com/optimization/scheduling/job_shop).
