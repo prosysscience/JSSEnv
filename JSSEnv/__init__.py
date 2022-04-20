@@ -1,6 +1,11 @@
-from gym.envs.registration import register
+import os
+import sys
+import warnings
 
-register(
-    id='jss-v1',
-    entry_point='JSSEnv.envs:JssEnv',
-)
+from gym import error
+from JSSEnv.version import VERSION as __version__
+from JSSEnv.utils import *
+
+from gym.core import Env, GoalEnv, Wrapper, ObservationWrapper, ActionWrapper, RewardWrapper
+from gym.envs import make, spec, register
+from JSSEnv.envs import JssEnv
