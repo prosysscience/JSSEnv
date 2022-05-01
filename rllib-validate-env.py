@@ -8,9 +8,10 @@ can be used for debugging issues in environment configuration.
 """
 import gym
 import numpy as np
+import JSSEnv            # import of the installed pip package needed   
 
 # test the environment
-instance_path = 'JSSEnv/envs/instances/dmu16'
+instance_path = 'JSSEnv/envs/instances/dmu20'
 env = gym.make('JSSEnv-v1', env_config={'instance_path': instance_path})
 
    
