@@ -46,3 +46,7 @@ class TestState(unittest.TestCase):
             self.assertNotEqual(min(env.solution.flatten()), -1, np.array2string(env.solution.flatten()))
             for job in range(env.jobs):
                 self.assertEqual(env.todo_time_step_job[job], env.machines)
+
+
+if __name__ == '__main__':
+    unittest.main()
