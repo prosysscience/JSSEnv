@@ -4,10 +4,12 @@ import imageio
 
 
 class TestRendering(unittest.TestCase):
-
     def test_optimum_ta01_gif(self):
         # http://optimizizer.com/solution.php?name=ta01&UB=1231&problemclass=ta
-        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta01'})
+        env = gym.make(
+            "JSSEnv:JSSEnv-v1",
+            env_config={"instance_path": "../JSSEnv/envs/instances/ta01"},
+        )
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -26,7 +28,7 @@ class TestRendering(unittest.TestCase):
             [7, 9, 8, 5, 6, 0, 2, 3, 1, 13, 14, 12, 4, 10, 11],
             [6, 0, 7, 11, 5, 14, 10, 2, 4, 13, 8, 9, 3, 12, 1],
             [13, 10, 7, 9, 5, 3, 11, 1, 12, 14, 2, 4, 0, 6, 8],
-            [13, 11, 6, 8, 7, 4, 1, 5, 3, 10, 0, 14, 9, 2, 12]
+            [13, 11, 6, 8, 7, 4, 1, 5, 3, 10, 0, 14, 9, 2, 12],
         ]
         done = False
         job_nb = len(solution_sequence[0])
@@ -42,10 +44,18 @@ class TestRendering(unittest.TestCase):
                     break
                 if env.machine_legal[machine] and index_machine[machine] < job_nb:
                     action_to_do = solution_sequence[machine][index_machine[machine]]
-                    if env.needed_machine_jobs[action_to_do] == machine and env.legal_actions[action_to_do]:
+                    if (
+                        env.needed_machine_jobs[action_to_do] == machine
+                        and env.legal_actions[action_to_do]
+                    ):
                         no_op = False
-                        self.assertTrue(env.legal_actions[action_to_do], "We don't perform illegal actions")
-                        self.assertEqual(sum(env.legal_actions[:-1]), env.nb_legal_actions)
+                        self.assertTrue(
+                            env.legal_actions[action_to_do],
+                            "We don't perform illegal actions",
+                        )
+                        self.assertEqual(
+                            sum(env.legal_actions[:-1]), env.nb_legal_actions
+                        )
                         state, reward, done, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
@@ -55,13 +65,18 @@ class TestRendering(unittest.TestCase):
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
                 env.increase_time_step()
-                self.assertTrue(env.current_time_step > previous_time_step, "we increase the time step")
-        self.assertEqual(sum(index_machine), len(solution_sequence) * len(solution_sequence[0]))
+                self.assertTrue(
+                    env.current_time_step > previous_time_step,
+                    "we increase the time step",
+                )
+        self.assertEqual(
+            sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
+        )
         self.assertEqual(env.current_time_step, 1231)
         imageio.mimsave("ta01.gif", images)
         env.reset()
         self.assertEqual(env.current_time_step, 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
