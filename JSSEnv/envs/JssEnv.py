@@ -258,7 +258,7 @@ class JssEnv(gym.Env):
                 self.machine_legal[needed_machine] = False
                 self.illegal_actions[needed_machine][job] = True
                 self.action_illegal_no_op[job] = True
-        while self.nb_machine_legal == 0:
+        while self.nb_machine_legal == 0 and len(self.next_time_step) > 0:
             reward -= self._increase_time_step()
         scaled_reward = self._reward_scaler(reward)
         self._prioritization_non_final()

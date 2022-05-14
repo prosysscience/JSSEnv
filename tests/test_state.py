@@ -20,6 +20,24 @@ class TestState(unittest.TestCase):
         self.assertEqual(action_list1, expected_actions1)
         self.assertEqual(action_list2, expected_actions2)
 
+    def test_random_episode1(self):
+        """ Threw IndexError: pop from empty list until it was fixed """
+        seed_list = [42, 3, 314, 315]
+        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
+        for seed in seed_list:
+            env.seed(seed)
+            _ = env.reset()
+
+            while True:
+                action = env.action_space.sample()
+                obs, reward, done, _ = env.step(action)
+                env.render()
+                if done:
+                    print("Episode ended")
+                    break
+
+        env.close()
+
     def test_random(self):
         env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
         average = 0
