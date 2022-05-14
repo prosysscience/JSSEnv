@@ -54,10 +54,14 @@ class TestRendering(unittest.TestCase):
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                env._increase_time_step()
+                env.increase_time_step()
                 self.assertTrue(env.current_time_step > previous_time_step, "we increase the time step")
         self.assertEqual(sum(index_machine), len(solution_sequence) * len(solution_sequence[0]))
         self.assertEqual(env.current_time_step, 1231)
         imageio.mimsave("ta01.gif", images)
         env.reset()
         self.assertEqual(env.current_time_step, 0)
+
+
+if __name__ == '__main__':
+    unittest.main()
