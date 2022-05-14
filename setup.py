@@ -1,7 +1,8 @@
 from setuptools import setup, find_packages
+from JSSEnv.version import VERSION
 
 setup(name='JSSEnv',
-      version='1.0.0',
+      version=VERSION,
       author="Pierre Tassel",
       author_email="pierre.tassel@aau.at",
       description="An optimized OpenAi gym's environment to simulate the Job-Shop Scheduling problem.",
