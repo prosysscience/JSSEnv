@@ -284,6 +284,9 @@ class JssEnv(gym.Env):
     def _reward_scaler(self, reward):
         return reward / self.max_time_op
 
+    def increase_time_step(self):
+        self._increase_time_step()
+
     def _increase_time_step(self):
         """
         The heart of the logic his here, we need to increase every counter when we have a nope action called
