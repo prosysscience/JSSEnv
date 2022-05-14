@@ -240,55 +240,64 @@ class JssEnv(gym.Env):
                             time_step += 1
 
     def step(self, action: int):
-        reward = 0.0
-        if action == self.jobs:
-            self.nb_machine_legal = 0
-            self.nb_legal_actions = 0
-            for job in range(self.jobs):
-                if self.legal_actions[job]:
-                    self.legal_actions[job] = False
-                    needed_machine = self.needed_machine_jobs[job]
-                    self.machine_legal[needed_machine] = False
-                    self.illegal_actions[needed_machine][job] = True
-                    self.action_illegal_no_op[job] = True
-            while self.nb_machine_legal == 0:
-                reward -= self._increase_time_step()
-            scaled_reward = self._reward_scaler(reward)
-            self._prioritization_non_final()
-            self._check_no_op()
-            return self._get_current_state_representation(), scaled_reward, self._is_done(), {}
+        nope_action_selected = action == self.jobs
+        if nope_action_selected:
+            scaled_reward = self._handle_nope_action()
         else:
-            current_time_step_job = self.todo_time_step_job[action]
-            machine_needed = self.needed_machine_jobs[action]
-            time_needed = self.instance_matrix[action][current_time_step_job][1]
-            reward += time_needed
-            self.time_until_available_machine[machine_needed] = time_needed
-            self.time_until_finish_current_op_jobs[action] = time_needed
-            self.state[action][1] = time_needed / self.max_time_op
-            to_add_time_step = self.current_time_step + time_needed
-            if to_add_time_step not in self.next_time_step:
-                index = bisect.bisect_left(self.next_time_step, to_add_time_step)
-                self.next_time_step.insert(index, to_add_time_step)
-                self.next_jobs.insert(index, action)
-            self.solution[action][current_time_step_job] = self.current_time_step
-            for job in range(self.jobs):
-                if self.needed_machine_jobs[job] == machine_needed and self.legal_actions[job]:
-                    self.legal_actions[job] = False
-                    self.nb_legal_actions -= 1
-            self.nb_machine_legal -= 1
-            self.machine_legal[machine_needed] = False
-            for job in range(self.jobs):
-                if self.illegal_actions[machine_needed][job]:
-                    self.action_illegal_no_op[job] = False
-                    self.illegal_actions[machine_needed][job] = False
-            # if we can't allocate new job in the current timestep, we pass to the next one
-            while self.nb_machine_legal == 0 and len(self.next_time_step) > 0:
-                reward -= self._increase_time_step()
-            self._prioritization_non_final()
-            self._check_no_op()
-            # we then need to scale the reward
-            scaled_reward = self._reward_scaler(reward)
-            return self._get_current_state_representation(), scaled_reward, self._is_done(), {}
+            scaled_reward = self._handle_job_action(action)
+        return self._get_current_state_representation(), scaled_reward, self._is_done(), {}
+
+    def _handle_nope_action(self):
+        reward = 0.0
+        self.nb_machine_legal = 0
+        self.nb_legal_actions = 0
+        for job in range(self.jobs):
+            if self.legal_actions[job]:
+                self.legal_actions[job] = False
+                needed_machine = self.needed_machine_jobs[job]
+                self.machine_legal[needed_machine] = False
+                self.illegal_actions[needed_machine][job] = True
+                self.action_illegal_no_op[job] = True
+        while self.nb_machine_legal == 0:
+            reward -= self._increase_time_step()
+        scaled_reward = self._reward_scaler(reward)
+        self._prioritization_non_final()
+        self._check_no_op()
+        return scaled_reward
+
+    def _handle_job_action(self, action):
+        reward = 0.0
+        current_time_step_job = self.todo_time_step_job[action]
+        machine_needed = self.needed_machine_jobs[action]
+        time_needed = self.instance_matrix[action][current_time_step_job][1]
+        reward += time_needed
+        self.time_until_available_machine[machine_needed] = time_needed
+        self.time_until_finish_current_op_jobs[action] = time_needed
+        self.state[action][1] = time_needed / self.max_time_op
+        to_add_time_step = self.current_time_step + time_needed
+        if to_add_time_step not in self.next_time_step:
+            index = bisect.bisect_left(self.next_time_step, to_add_time_step)
+            self.next_time_step.insert(index, to_add_time_step)
+            self.next_jobs.insert(index, action)
+        self.solution[action][current_time_step_job] = self.current_time_step
+        for job in range(self.jobs):
+            if self.needed_machine_jobs[job] == machine_needed and self.legal_actions[job]:
+                self.legal_actions[job] = False
+                self.nb_legal_actions -= 1
+        self.nb_machine_legal -= 1
+        self.machine_legal[machine_needed] = False
+        for job in range(self.jobs):
+            if self.illegal_actions[machine_needed][job]:
+                self.action_illegal_no_op[job] = False
+                self.illegal_actions[machine_needed][job] = False
+        # if we can't allocate new job in the current timestep, we pass to the next one
+        while self.nb_machine_legal == 0 and len(self.next_time_step) > 0:
+            reward -= self._increase_time_step()
+        self._prioritization_non_final()
+        self._check_no_op()
+        # we then need to scale the reward
+        scaled_reward = self._reward_scaler(reward)
+        return scaled_reward
 
     def _reward_scaler(self, reward):
         return reward / self.max_time_op
