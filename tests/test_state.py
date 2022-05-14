@@ -5,6 +5,22 @@ import numpy as np
 
 class TestState(unittest.TestCase):
 
+    def test_last_action(self):
+        """ Threw IndexError: index 101 is out of bounds for axis 0 with size 100 until it was fixed """
+
+        seed = 34
+        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
+        env.seed(seed)
+        _ = env.reset()
+
+        action = env.action_space.n
+        obs, reward, done, _ = env.step(action)
+        env.render()
+        if done:
+            print("Episode ended")
+
+        env.close()
+
     def test_seed(self):
         env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
         env.seed(42)
