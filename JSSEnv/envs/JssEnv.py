@@ -118,6 +118,15 @@ class JssEnv(gym.Env):
             "real_obs": gym.spaces.Box(low=0.0, high=1.0, shape=(self.jobs, 7), dtype=np.float),
         })
 
+    def seed(self, seed) -> list[int]:
+        if seed:
+            random.seed(seed)
+            np.random.seed(seed)
+            self.action_space.seed(seed)
+            return [seed, seed, seed]
+        else:
+            return [None, None, None]
+
     def _get_current_state_representation(self):
         self.state[:, 0] = self.legal_actions[:-1]
         return {

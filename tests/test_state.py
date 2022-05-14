@@ -5,6 +5,21 @@ import numpy as np
 
 class TestState(unittest.TestCase):
 
+    def test_seed(self):
+        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
+        env.seed(42)
+
+        action_list1 = [env.action_space.sample() for _ in range(5)]
+
+        env.seed(3141592)
+        action_list2 = [env.action_space.sample() for _ in range(5)]
+
+        expected_actions1 = [75, 25, 61, 29, 59]
+        expected_actions2 = [53, 18, 59, 95, 18]
+
+        self.assertEqual(action_list1, expected_actions1)
+        self.assertEqual(action_list2, expected_actions2)
+
     def test_random(self):
         env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
         average = 0
