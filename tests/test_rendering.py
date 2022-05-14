@@ -7,7 +7,7 @@ class TestRendering(unittest.TestCase):
 
     def test_optimum_ta01_gif(self):
         # http://optimizizer.com/solution.php?name=ta01&UB=1231&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta01'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta01'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine

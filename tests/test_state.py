@@ -9,7 +9,7 @@ class TestState(unittest.TestCase):
         """ Threw IndexError: index 101 is out of bounds for axis 0 with size 100 until it was fixed """
 
         seed = 34
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
         env.seed(seed)
         _ = env.reset()
 
@@ -22,7 +22,7 @@ class TestState(unittest.TestCase):
         env.close()
 
     def test_seed(self):
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
         env.seed(42)
 
         action_list1 = [env.action_space.sample() for _ in range(5)]
@@ -39,7 +39,7 @@ class TestState(unittest.TestCase):
     def test_random_episode1(self):
         """ Threw IndexError: pop from empty list until it was fixed """
         seed_list = [42, 3, 314, 315]
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
         for seed in seed_list:
             env.seed(seed)
             _ = env.reset()
@@ -55,7 +55,7 @@ class TestState(unittest.TestCase):
         env.close()
 
     def test_random(self):
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta80'})
         average = 0
         for _ in range(100):
             state = env.reset()

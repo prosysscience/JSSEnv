@@ -6,7 +6,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta01(self):
         # http://optimizizer.com/solution.php?name=ta01&UB=1231&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta01'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta01'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -59,7 +59,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta41(self):
         # http://optimizizer.com/solution.php?name=ta41&UB=2006&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta41'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta41'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -136,7 +136,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta42(self):
         # http://optimizizer.com/solution.php?name=ta42&UB=1939&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta42'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta42'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -213,7 +213,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta43(self):
         # http://optimizizer.com/solution.php?name=ta43&UB=1846&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta43'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta43'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -290,7 +290,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta44(self):
         # http://optimizizer.com/solution.php?name=ta44&UB=1979&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta44'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta44'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -367,7 +367,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta45(self):
         # http://optimizizer.com/solution.php?name=ta45&UB=2000&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta45'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta45'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -444,7 +444,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta46(self):
         # http://optimizizer.com/solution.php?name=ta46&UB=2006&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta46'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta46'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -521,7 +521,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta47(self):
         # http://optimizizer.com/solution.php?name=ta47&UB=1889&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta47'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta47'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -598,7 +598,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta48(self):
         # http://optimizizer.com/solution.php?name=ta48&UB=1937&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta48'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta48'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -675,7 +675,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta49(self):
         # http://optimizizer.com/solution.php?name=ta49&UB=1963&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta49'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta49'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -752,7 +752,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta50(self):
         # http://optimizizer.com/solution.php?name=ta50&UB=1923&problemclass=ta
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta50'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta50'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
@@ -828,7 +828,7 @@ class TestSolution(unittest.TestCase):
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta51(self):
-        env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta51'})
+        env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': '../JSSEnv/envs/instances/ta51'})
         env.reset()
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine

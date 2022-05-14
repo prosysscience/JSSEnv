@@ -31,7 +31,7 @@ Once installed, the environment will be available in your OpenAi's gym environme
 
 ```python
 import gym
-env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': 'INSTANCE_PATH'})
+env = gym.make('JSSEnv:JSSEnv-v1', env_config={'instance_path': 'INSTANCE_PATH'})
 ```
 
 ### Important: Your instance must follow [Taillard's specification](http://jobshop.jjvh.nl/explanation.php#taillard_def). 
