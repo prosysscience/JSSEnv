@@ -1,1 +1,1 @@
-from JSSEnv.envs.JssEnv import JssEnv
+from JSSEnv.envs.jss_env import JssEnv

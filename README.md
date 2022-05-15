@@ -24,17 +24,48 @@ Getting Started
 This repository is available as a pip package:
 
 ```shell
-pip install JSSEnv==1.0.0
+pip install JSSEnv
 ```
 
 Once installed, the environment will be available in your OpenAi's gym environment and can be used to train a reinforcement learning agent:
 
 ```python
 import gym
-env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': 'INSTANCE_PATH'})
+import JSSEnv # an ongoing issue with OpenAi's gym causes it to not import automatically external modules, see: https://github.com/openai/gym/issues/2809
+# for older version of gym, you have to use 
+# env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': 'INSTANCE_PATH'})
+env = gym.make('jss-v1', env_config={'instance_path': 'INSTANCE_PATH'})
 ```
 
 ### Important: Your instance must follow [Taillard's specification](http://jobshop.jjvh.nl/explanation.php#taillard_def). 
+
+
+How To Use
+------------
+
+The observation provided by the environment contains both a boolean array indicating if the action is legal or not and the "real" observation
+
+```python 
+self.observation_space = gym.spaces.Dict({
+            "action_mask": gym.spaces.Box(0, 1, shape=(self.jobs + 1,)),
+            "real_obs": gym.spaces.Box(low=0.0, high=1.0, shape=(self.jobs, 7), dtype=np.float),
+        })
+```
+
+A random agent would have to sample legal action from this `action_mask` array, otherwise, you might take illegal actions.  
+In theory, it is not possible to take the same action over and over again as the job will have one of his operations currently on a machine and might not be free for schedule.  
+
+For research purposes, I've made a random loop using RLLib: https://github.com/prosysscience/RL-Job-Shop-Scheduling/blob/0bbe0c0f2b8a742b75cbe67c5f6a825b8cfdf5eb/JSS/randomLoop/random_loop.py
+
+If you don't want to use RLLib, you can write a simple random loop using `numpy.random.choice` function:
+
+```python
+import numpy as np
+np.random.choice(len(legal_action), 1, p=(legal_action / legal_action.sum()))[0]
+```
+
+Where `legal_action` is the array of legal action (i.e., `action_mask`).  
+This line of code will randomly sample one legal action from the `action_mask`.
 
 Project Organization
 ------------
