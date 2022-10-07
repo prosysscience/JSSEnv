@@ -44,6 +44,7 @@ class JssEnv(gym.Env):
         self.nb_machine_legal = 0
         # initial values for variables used for solving (to reinitialize when reset() is called)
         self.solution = None
+        self.last_solution = None
         self.last_time_step = float("inf")
         self.current_time_step = float("inf")
         self.next_time_step = list()
@@ -435,6 +436,7 @@ class JssEnv(gym.Env):
     def _is_done(self):
         if self.nb_legal_actions == 0:
             self.last_time_step = self.current_time_step
+            self.last_solution = self.solution
             return True
         return False
 
