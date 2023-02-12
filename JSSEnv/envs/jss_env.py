@@ -28,8 +28,7 @@ class JssEnv(gym.Env):
         """
         if env_config is None:
             env_config = {
-                "instance_path": str(Path(__file__).parent.absolute())
-                + "/instances/ta80"
+                "instance_path": Path(__file__).parent.absolute() / "instances/ta80"
             }
         instance_path = env_config["instance_path"]
 
