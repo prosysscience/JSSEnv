@@ -28,8 +28,7 @@ class JssEnv(gym.Env):
         """
         if env_config is None:
             env_config = {
-                "instance_path": str(Path(__file__).parent.absolute())
-                + "/instances/ta80"
+                "instance_path": Path(__file__).parent.absolute() / "instances" / "ta80"
             }
         instance_path = env_config["instance_path"]
 
@@ -64,37 +63,23 @@ class JssEnv(gym.Env):
         # initial values for variables used for representation
         self.start_timestamp = datetime.datetime.now().timestamp()
         self.sum_op = 0
-        instance_file = open(instance_path, "r")
-        line_str = instance_file.readline()
-        line_cnt = 1
-        while line_str:
-            split_data = line_str.split()
-            if line_cnt == 1:
-                self.jobs, self.machines = int(split_data[0]), int(split_data[1])
-                # matrix which store tuple of (machine, length of the job)
-                self.instance_matrix = np.zeros(
-                    (self.jobs, self.machines), dtype=(int, 2)
-                )
-                # contains all the time to complete jobs
-                self.jobs_length = np.zeros(self.jobs, dtype=int)
-            else:
-                # couple (machine, time)
-                assert len(split_data) % 2 == 0
-                # each jobs must pass a number of operation equal to the number of machines
-                assert len(split_data) / 2 == self.machines
-                i = 0
-                # we get the actual jobs
-                job_nb = line_cnt - 2
-                while i < len(split_data):
-                    machine, time = int(split_data[i]), int(split_data[i + 1])
-                    self.instance_matrix[job_nb][i // 2] = (machine, time)
-                    self.max_time_op = max(self.max_time_op, time)
-                    self.jobs_length[job_nb] += time
-                    self.sum_op += time
-                    i += 2
-            line_str = instance_file.readline()
-            line_cnt += 1
-        instance_file.close()
+        with open(instance_path, "r") as instance_file:
+            for line_cnt, line_str in enumerate(instance_file, start=1):
+                split_data = list(map(int, line_str.split()))
+
+                if line_cnt == 1:
+                    self.jobs, self.machines = split_data
+                    self.instance_matrix = np.zeros((self.jobs, self.machines), dtype=(int, 2))
+                    self.jobs_length = np.zeros(self.jobs, dtype=int)
+                else:
+                    assert len(split_data) % 2 == 0 and len(split_data) // 2 == self.machines
+                    job_nb = line_cnt - 2
+                    for i in range(0, len(split_data), 2):
+                        machine, time = split_data[i], split_data[i + 1]
+                        self.instance_matrix[job_nb][i // 2] = (machine, time)
+                        self.max_time_op = max(self.max_time_op, time)
+                        self.jobs_length[job_nb] += time
+                        self.sum_op += time
         self.max_time_jobs = max(self.jobs_length)
         # check the parsed data are correct
         assert self.max_time_op > 0
@@ -470,3 +455,19 @@ class JssEnv(gym.Env):
                 autorange="reversed"
             )  # otherwise tasks are listed from the bottom up
         return fig
+
+
+if __name__ == '__main__':
+    env = JssEnv()
+    obs = env.reset()
+    done = False
+    cum_reward = 0
+    while not done:
+        legal_actions = obs["action_mask"]
+        actions = np.random.choice(
+            len(legal_actions), 1, p=(legal_actions / legal_actions.sum())
+        )[0]
+        obs, rewards, done, _ = env.step(actions)
+        cum_reward += rewards
+    print(f"Cumulative reward: {cum_reward}")
+
