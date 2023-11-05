@@ -89,6 +89,10 @@ Project Organization
                                  legal in our environment.
 --------
 
+## Question/Need Support?
+
+Open an issue, we will do our best to answer it.
+
 ## License
 
 MIT License
