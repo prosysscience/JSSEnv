@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import unittest
 from pathlib import Path
 
@@ -11,8 +11,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta01"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -72,7 +72,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 1231)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta41(self):
@@ -82,8 +82,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta41"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -768,7 +768,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 2006)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta42(self):
@@ -778,8 +778,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta42"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -1464,7 +1464,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 1939)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta43(self):
@@ -1474,8 +1474,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta43"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -2160,7 +2160,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 1846)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta44(self):
@@ -2170,8 +2170,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta44"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -2856,7 +2856,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 1979)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta45(self):
@@ -2866,8 +2866,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta45"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -3552,7 +3552,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 2000)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta46(self):
@@ -3562,8 +3562,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta46"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -4248,7 +4248,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 2006)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta47(self):
@@ -4258,8 +4258,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta47"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -4944,7 +4944,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 1889)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta48(self):
@@ -4954,8 +4954,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta48"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -5640,7 +5640,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 1937)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta49(self):
@@ -5650,8 +5650,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta49"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -6336,7 +6336,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 1963)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta50(self):
@@ -6346,8 +6346,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta50"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -7032,7 +7032,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 1923)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
     def test_optimum_ta51(self):
@@ -7041,8 +7041,8 @@ class TestSolution(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta51"
             },
-        )
-        env.reset()
+        ).unwrapped
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
         # for every machine give the jobs to process in order for every machine
         solution_sequence = [
@@ -7867,7 +7867,7 @@ class TestSolution(unittest.TestCase):
             sum(index_machine), len(solution_sequence) * len(solution_sequence[0])
         )
         self.assertEqual(env.current_time_step, 2760)
-        env.reset()
+        env.reset(seed=42)
         self.assertEqual(env.current_time_step, 0)
 
 

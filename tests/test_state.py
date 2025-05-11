@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import unittest
 import numpy as np
 from pathlib import Path
@@ -7,14 +7,14 @@ from pathlib import Path
 class TestState(unittest.TestCase):
     def test_random(self):
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta01"
             },
-        )
+        ).unwrapped
         average = 0
         for _ in range(100):
-            state = env.reset()
+            state = env.reset(seed=42)
             self.assertEqual(env.current_time_step, 0)
             legal_actions = env.get_legal_actions()
             done = False

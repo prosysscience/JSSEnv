@@ -30,7 +30,7 @@ pip install JSSEnv
 Once installed, the environment will be available in your OpenAi's gym environment and can be used to train a reinforcement learning agent:
 
 ```python
-import gym
+import gymnasium as gym
 import JSSEnv # an ongoing issue with OpenAi's gym causes it to not import automatically external modules, see: https://github.com/openai/gym/issues/2809
 # for older version of gym, you have to use 
 # env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': 'INSTANCE_PATH'})

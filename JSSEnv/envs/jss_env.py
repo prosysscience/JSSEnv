@@ -3,7 +3,7 @@ import datetime
 import random
 
 import pandas as pd
-import gym
+import gymnasium as gym
 import numpy as np
 import plotly.figure_factory as ff
 from pathlib import Path
@@ -23,10 +23,19 @@ class JssEnv(gym.Env):
         -If we don't have a legal action (i.e. we can't allocate a job),
         we automatically go to the next time step until we have a legal action
 
+        MDP components:
+            - States (s)
+            - Actions (a): allocate a job's next operation, or NO-OP to advance time
+            - Transitions (P): deterministic updates of job progress and machine availability
+            - Rewards (R): positive for processing time, negative for idle planning, scaled
+            - Episode termination: when all jobs finish (no legal actions remain)
+
         -
         :param env_config: Ray dictionary of config parameter
         """
+        # Load instance data (jobs, machines, operation times)
         if env_config is None:
+            print(f"Getting instance data from: {Path(__file__).parent.absolute() / "instances" / "ta80"}")
             env_config = {
                 "instance_path": Path(__file__).parent.absolute() / "instances" / "ta80"
             }
@@ -87,8 +96,13 @@ class JssEnv(gym.Env):
         assert self.jobs > 0
         assert self.machines > 1, "We need at least 2 machines"
         assert self.instance_matrix is not None
+        
+        # ACTION SPACE: J jobs + 1 NO-OP action
+        # a in {0..J-1}: start next op of job a; a=J: fast-forward time
         # allocate a job + one to wait
         self.action_space = gym.spaces.Discrete(self.jobs + 1)
+        self.action_space = gym.spaces.Discrete(self.jobs + 1)
+        
         # used for plotting
         self.colors = [
             tuple([random.random() for _ in range(3)]) for _ in range(self.machines)
@@ -103,6 +117,10 @@ class JssEnv(gym.Env):
             -Time since IDLE: 0 if not available, time otherwise
             -Total IDLE time in the schedule
         """
+        # OBSERVATION SPACE:
+        #  - action_mask: binary vector length J+1
+        #  - real_obs: normalized features matrix J x 7
+        
         self.observation_space = gym.spaces.Dict(
             {
                 "action_mask": gym.spaces.Box(0, 1, shape=(self.jobs + 1,)),
@@ -112,6 +130,10 @@ class JssEnv(gym.Env):
             }
         )
 
+    # def seed(self, seed=None):
+    #     self.np_random, seed = gym.utils.seeding.np_random(seed)
+    #     return [seed]
+    
     def _get_current_state_representation(self):
         self.state[:, 0] = self.legal_actions[:-1]
         return {
@@ -122,17 +144,32 @@ class JssEnv(gym.Env):
     def get_legal_actions(self):
         return self.legal_actions
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
+        """
+        Reset the environment to its initial state.
+    
+        :param seed: Optional seed for the environment's random number generator.
+        :param options: Additional options for resetting the environment (not used here).
+        :return: A tuple (observation, info), where observation is the initial state and info is an empty dictionary.
+        """
+        # Set the seed if provided
+        if seed is not None:
+            self.np_random, seed = gym.utils.seeding.np_random(seed)
+    
+        # Initialize scheduling state variables
         self.current_time_step = 0
         self.next_time_step = list()
         self.next_jobs = list()
         self.nb_legal_actions = self.jobs
         self.nb_machine_legal = 0
-        # represent all the legal actions
+        
+        # All job-actions legal; NO-OP illegal initially
         self.legal_actions = np.ones(self.jobs + 1, dtype=bool)
         self.legal_actions[self.jobs] = False
-        # used to represent the solution
+        
+        # Used to represent the solution
         self.solution = np.full((self.jobs, self.machines), -1, dtype=int)
+        
         self.time_until_available_machine = np.zeros(self.machines, dtype=int)
         self.time_until_finish_current_op_jobs = np.zeros(self.jobs, dtype=int)
         self.todo_time_step_job = np.zeros(self.jobs, dtype=int)
@@ -143,14 +180,48 @@ class JssEnv(gym.Env):
         self.illegal_actions = np.zeros((self.machines, self.jobs), dtype=bool)
         self.action_illegal_no_op = np.zeros(self.jobs, dtype=bool)
         self.machine_legal = np.zeros(self.machines, dtype=bool)
+        
         for job in range(self.jobs):
             needed_machine = self.instance_matrix[job][0][0]
             self.needed_machine_jobs[job] = needed_machine
             if not self.machine_legal[needed_machine]:
                 self.machine_legal[needed_machine] = True
                 self.nb_machine_legal += 1
+                
+        # Feature state matrix (zeros)
         self.state = np.zeros((self.jobs, 7), dtype=float)
-        return self._get_current_state_representation()
+        
+        # Return initial MDP state and empty info
+        return self._get_current_state_representation(), {}
+    
+        # self.current_time_step = 0
+        # self.next_time_step = list()
+        # self.next_jobs = list()
+        # self.nb_legal_actions = self.jobs
+        # self.nb_machine_legal = 0
+        # # represent all the legal actions
+        # self.legal_actions = np.ones(self.jobs + 1, dtype=bool)
+        # self.legal_actions[self.jobs] = False
+        # # used to represent the solution
+        # self.solution = np.full((self.jobs, self.machines), -1, dtype=int)
+        # self.time_until_available_machine = np.zeros(self.machines, dtype=int)
+        # self.time_until_finish_current_op_jobs = np.zeros(self.jobs, dtype=int)
+        # self.todo_time_step_job = np.zeros(self.jobs, dtype=int)
+        # self.total_perform_op_time_jobs = np.zeros(self.jobs, dtype=int)
+        # self.needed_machine_jobs = np.zeros(self.jobs, dtype=int)
+        # self.total_idle_time_jobs = np.zeros(self.jobs, dtype=int)
+        # self.idle_time_jobs_last_op = np.zeros(self.jobs, dtype=int)
+        # self.illegal_actions = np.zeros((self.machines, self.jobs), dtype=bool)
+        # self.action_illegal_no_op = np.zeros(self.jobs, dtype=bool)
+        # self.machine_legal = np.zeros(self.machines, dtype=bool)
+        # for job in range(self.jobs):
+        #     needed_machine = self.instance_matrix[job][0][0]
+        #     self.needed_machine_jobs[job] = needed_machine
+        #     if not self.machine_legal[needed_machine]:
+        #         self.machine_legal[needed_machine] = True
+        #         self.nb_machine_legal += 1
+        # self.state = np.zeros((self.jobs, 7), dtype=float)
+        # return self._get_current_state_representation()
 
     def _prioritization_non_final(self):
         if self.nb_machine_legal >= 1:
@@ -272,10 +343,23 @@ class JssEnv(gym.Env):
                             time_step += 1
 
     def step(self, action: int):
-        reward = 0.0
+        """
+        Apply action a_t:
+          - If a < J: start job a's next operation -> reward = processing time
+          - If a = J (NO-OP): advance time to next completion -> reward = -idle penalty
+        Then update state s_{t+1}, compute scaled reward, check termination.
+        Returns (obs, reward, terminated, truncated, info).
+        """
+        reward = 0.0    
+        terminated = False
+        truncated = False
+    
         if action == self.jobs:
+            # NO-OP: fast-forward time until at least one machine is free
+            # Penalize idle "hole planning"
             self.nb_machine_legal = 0
             self.nb_legal_actions = 0
+            
             for job in range(self.jobs):
                 if self.legal_actions[job]:
                     self.legal_actions[job] = False
@@ -283,22 +367,46 @@ class JssEnv(gym.Env):
                     self.machine_legal[needed_machine] = False
                     self.illegal_actions[needed_machine][job] = True
                     self.action_illegal_no_op[job] = True
-            while self.nb_machine_legal == 0:
+
+            # NO-OP: penalize agent, only fast-forward while there are pending completions
+            while self.nb_machine_legal == 0 and len(self.next_time_step) > 0:
                 reward -= self.increase_time_step()
+            
+            # if nb_machine_legal==0 here AND no pending events,
+            # we simply exit the loop without crashing
+
+            # scale reward
             scaled_reward = self._reward_scaler(reward)
+            
+            # update masks, prioritization, etc.
             self._prioritization_non_final()
             self._check_no_op()
+            
+            # resync counters (new, have no idea how this helps)
+            self.nb_machine_legal = int(self.machine_legal.sum())
+            self.nb_legal_actions = int(self.legal_actions.sum())
+            
+            # termination check
+            terminated = self._is_done()
+            
             return (
                 self._get_current_state_representation(),
                 scaled_reward,
-                self._is_done(),
+                terminated,
+                truncated,
                 {},
             )
         else:
+            # Schedule next operation of job 'action'
+            # Immediate reward = operation processing time
             current_time_step_job = self.todo_time_step_job[action]
             machine_needed = self.needed_machine_jobs[action]
-            time_needed = self.instance_matrix[action][current_time_step_job][1]
-            reward += time_needed
+
+            a_to_im = self.instance_matrix[action]
+            time_needed = a_to_im[current_time_step_job][1]
+            
+            reward += time_needed # reward
+            
             self.time_until_available_machine[machine_needed] = time_needed
             self.time_until_finish_current_op_jobs[action] = time_needed
             self.state[action][1] = time_needed / self.max_time_op
@@ -315,40 +423,58 @@ class JssEnv(gym.Env):
                 ):
                     self.legal_actions[job] = False
                     self.nb_legal_actions -= 1
+                    
             self.nb_machine_legal -= 1
             self.machine_legal[machine_needed] = False
+            
             for job in range(self.jobs):
                 if self.illegal_actions[machine_needed][job]:
                     self.action_illegal_no_op[job] = False
                     self.illegal_actions[machine_needed][job] = False
-            # if we can't allocate new job in the current timestep, we pass to the next one
+                    
+            # If no machines free, advance time automatically
             while self.nb_machine_legal == 0 and len(self.next_time_step) > 0:
                 reward -= self.increase_time_step()
+               
+            # Determine which actions are legal next 
             self._prioritization_non_final()
             self._check_no_op()
-            # we then need to scale the reward
+            
+            # Scale reward to [-1,1] range by max operation time
             scaled_reward = self._reward_scaler(reward)
+            
+            # Check for terminal state (all jobs done)
+            terminated = self._is_done()
+            
+            # Return new observation, reward, done flags
             return (
                 self._get_current_state_representation(),
                 scaled_reward,
-                self._is_done(),
+                terminated,
+                truncated,
                 {},
             )
-
+    
     def _reward_scaler(self, reward):
+        """Scale raw reward by the maximum operation time."""
         return reward / self.max_time_op
 
     def increase_time_step(self):
         """
-        The heart of the logic his here, we need to increase every counter when we have a nope action called
-        and return the time elapsed
-        :return: time elapsed
+        Internal time-advance:
+          - Pop next completion event
+          - Advance current_time_step
+          - Update remaining-times and idle metrics for jobs & machines
+        Returns total idle time across machines ("hole planning" penalty).
         """
         hole_planning = 0
+        
         next_time_step_to_pick = self.next_time_step.pop(0)
         self.next_jobs.pop(0)
+        
         difference = next_time_step_to_pick - self.current_time_step
         self.current_time_step = next_time_step_to_pick
+        
         for job in range(self.jobs):
             was_left_time = self.time_until_finish_current_op_jobs[job]
             if was_left_time > 0:
@@ -419,6 +545,7 @@ class JssEnv(gym.Env):
         return hole_planning
 
     def _is_done(self):
+        """Episode terminates when no legal job-actions remain (all jobs completed)."""
         if self.nb_legal_actions == 0:
             self.last_time_step = self.current_time_step
             self.last_solution = self.solution
@@ -426,7 +553,9 @@ class JssEnv(gym.Env):
         return False
 
     def render(self, mode="human"):
+        """Optional: Gantt chart of the current schedule solution."""
         df = []
+        # set the env_config instance path or else it won't render - Chris
         for job in range(self.jobs):
             i = 0
             while i < self.machines and self.solution[job][i] != -1:
@@ -459,7 +588,7 @@ class JssEnv(gym.Env):
 
 if __name__ == '__main__':
     env = JssEnv()
-    obs = env.reset()
+    obs = env.reset(seed=42)
     done = False
     cum_reward = 0
     while not done:
@@ -467,7 +596,7 @@ if __name__ == '__main__':
         actions = np.random.choice(
             len(legal_actions), 1, p=(legal_actions / legal_actions.sum())
         )[0]
-        obs, rewards, done, _ = env.step(actions)
+        observation, reward, terminated, truncated, info = env.step(actions)
         cum_reward += rewards
     print(f"Cumulative reward: {cum_reward}")
 
