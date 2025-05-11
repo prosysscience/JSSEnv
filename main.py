@@ -16,8 +16,6 @@ from gymnasium.utils import RecordConstructorArgs
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
 
-
-
 class IdleTrackingWrapper(RecordConstructorArgs, gym.Wrapper):
     """
     A Gymnasium wrapper that tracks idle time per machine by monkey-patching
@@ -86,7 +84,7 @@ print_every_n_iter = 50
 terminated = False
 truncated = False
 
-num_iters = 100
+num_iters = 1000
 
 try:
     for step in range(num_iters):  # Loop for a fixed number of steps
