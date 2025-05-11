@@ -132,7 +132,7 @@ finally:
             os.makedirs(output_dir, exist_ok=True)
             
             df = pd.DataFrame(records)
-            df.to_csv('jss_run.csv', index=False)
+            df.to_csv(os.path.join(output_dir, "jss_run.csv"), index=False)
             print("→ Metrics saved to jss_run.csv")
 
             # Plotting and saving each figure
