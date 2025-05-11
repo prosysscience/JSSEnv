@@ -355,10 +355,11 @@ class JssEnv(gym.Env):
             if current_op >= self.machines:
                 # job has no more operations → convert to NO-OP
                 action = self.jobs
+                
         reward = 0.0
         terminated = False
         truncated = False
-    
+        
         if action == self.jobs:
             # NO-OP: fast-forward time until at least one machine is free
             # Penalize idle "hole planning"
@@ -588,6 +589,11 @@ class JssEnv(gym.Env):
             fig.update_yaxes(
                 autorange="reversed"
             )  # otherwise tasks are listed from the bottom up
+            if hasattr(self, "_last_iteration"):
+                fig.update_layout(
+                    title_text=f"Iteration {self._last_iteration}",
+                    title_x=0.5,
+                )
         return fig
 
 
