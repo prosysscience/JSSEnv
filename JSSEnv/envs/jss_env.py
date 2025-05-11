@@ -350,7 +350,12 @@ class JssEnv(gym.Env):
         Then update state s_{t+1}, compute scaled reward, check termination.
         Returns (obs, reward, terminated, truncated, info).
         """
-        reward = 0.0    
+        if action < self.jobs:
+            current_op = self.todo_time_step_job[action]
+            if current_op >= self.machines:
+                # job has no more operations → convert to NO-OP
+                action = self.jobs
+        reward = 0.0
         terminated = False
         truncated = False
     

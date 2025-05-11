@@ -83,6 +83,8 @@ try:
             print(f"Next time step: {env.next_time_step}")
             print(f"\nNumber of legal machines: {env.nb_machine_legal}")
             print(f"Number of legal actions: {env.nb_legal_actions}")
+            # print(f"Legal actions: {env.get_legal_actions()}")
+            
             print(f"\nAction: {action}")
             print(f"Jobs: {env.jobs}")
             print("------")
