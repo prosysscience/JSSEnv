@@ -388,10 +388,6 @@ class JssEnv(gym.Env):
             self._prioritization_non_final()
             self._check_no_op()
             
-            # resync counters (new, have no idea how this helps)
-            self.nb_machine_legal = int(self.machine_legal.sum())
-            self.nb_legal_actions = int(self.legal_actions.sum())
-            
             # termination check
             terminated = self._is_done()
             
@@ -430,8 +426,9 @@ class JssEnv(gym.Env):
                     self.legal_actions[job] = False
                     self.nb_legal_actions -= 1
                     
-            self.nb_machine_legal -= 1
-            self.machine_legal[machine_needed] = False
+            if self.nb_machine_legal > 0:
+                self.nb_machine_legal -= 1
+                self.machine_legal[machine_needed] = False
             
             for job in range(self.jobs):
                 if self.illegal_actions[machine_needed][job]:
@@ -518,8 +515,7 @@ class JssEnv(gym.Env):
                         )
                     else:
                         self.needed_machine_jobs[job] = -1
-                        # this allow to have 1 is job is over (not 0 because, 0 strongly indicate that the job is a
-                        # good candidate)
+                        # this allow to have 1 is job is over (not 0 because, 0 strongly indicate that the job is a good candidate)
                         self.state[job][4] = 1.0
                         if self.legal_actions[job]:
                             self.legal_actions[job] = False

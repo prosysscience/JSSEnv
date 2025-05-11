@@ -226,3 +226,6 @@ fabric.properties
 
 # output folder
 output/
+.csv
+output-fixed-mach-legal-counter
+.DS_Store
