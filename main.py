@@ -77,6 +77,8 @@ print(f"env.action_space.shape = {env.action_space.shape}")
 # Initialize variables
 images = []
 records = []
+resets = []
+reset_counter = 0
 
 verbose = True
 print_every_n_iter = 50
@@ -104,17 +106,20 @@ try:
         temp_image = fig.to_image()
         images.append(imageio.imread(temp_image))
 
-        records.append({
-            'step':         step,
-            'reward':       reward,
-            'time_step':    env.current_time_step,
-            'legal_machines': env.nb_machine_legal,
-            'legal_actions':  env.nb_legal_actions
-        })
-
         # Check if the episode is done
         if terminated or truncated:
+            resets.append(step)
+            reset_counter += 1
             observation, info = env.reset(seed=42)
+            
+        records.append({
+            'step':           step,
+            'reward':         reward,
+            'time_step':      env.current_time_step,
+            'legal_machines': env.nb_machine_legal,
+            'legal_actions':  env.nb_legal_actions,
+            'resets':         reset_counter
+        })
 except Exception as e:
     print(Fore.RED + f"An error occured: {e}" + Fore.RESET)
     traceback.print_exc()
@@ -164,16 +169,23 @@ finally:
             # plt.show()
             plt.close()
 
-            # TO-DO: Idle time per machine
             plt.figure()
             plt.bar(range(env.n_machines), env.machine_idle)
             plt.xlabel('Machine ID'); plt.ylabel('Total Idle Time'); plt.title('Idle Time per Machine')
             plt.savefig(os.path.join(output_dir, "idle_time_per_machine.png"))
             # plt.show()
             plt.close()
+            
+            plt.figure()
+            plt.plot(df['step'], df['resets'])
+            plt.xlabel('Step'); plt.ylabel('Resets'); plt.title('Resets Over Time')
+            plt.savefig(os.path.join(output_dir, "resets_over_time.png"))
+            # plt.show()
+            plt.close()
 
             print(f"All figures saved to '{output_dir}/'")
             
+        print(f"Resets: {resets}")
         env.close()
     except Exception as e:
         print(Fore.RED + f"An error occured: {e}" + Fore.RESET)
