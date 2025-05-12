@@ -1,13 +1,13 @@
 import gymnasium as gym
 import unittest
 from pathlib import Path
-
+import JSSEnv
 
 class TestSolution(unittest.TestCase):
     def test_optimum_ta01(self):
         # http://optimizizer.com/solution.php?name=ta01&UB=1231&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta01"
             },
@@ -57,7 +57,7 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
@@ -78,7 +78,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta41(self):
         # http://optimizizer.com/solution.php?name=ta41&UB=2006&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta41"
             },
@@ -753,13 +753,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -774,7 +774,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta42(self):
         # http://optimizizer.com/solution.php?name=ta42&UB=1939&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta42"
             },
@@ -1449,13 +1449,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -1470,7 +1470,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta43(self):
         # http://optimizizer.com/solution.php?name=ta43&UB=1846&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta43"
             },
@@ -2145,13 +2145,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -2166,7 +2166,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta44(self):
         # http://optimizizer.com/solution.php?name=ta44&UB=1979&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta44"
             },
@@ -2841,13 +2841,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -2862,7 +2862,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta45(self):
         # http://optimizizer.com/solution.php?name=ta45&UB=2000&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta45"
             },
@@ -3537,13 +3537,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -3558,7 +3558,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta46(self):
         # http://optimizizer.com/solution.php?name=ta46&UB=2006&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta46"
             },
@@ -4233,13 +4233,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -4254,7 +4254,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta47(self):
         # http://optimizizer.com/solution.php?name=ta47&UB=1889&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta47"
             },
@@ -4929,13 +4929,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -4950,7 +4950,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta48(self):
         # http://optimizizer.com/solution.php?name=ta48&UB=1937&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta48"
             },
@@ -5625,13 +5625,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -5646,7 +5646,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta49(self):
         # http://optimizizer.com/solution.php?name=ta49&UB=1963&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta49"
             },
@@ -6321,13 +6321,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -6342,7 +6342,7 @@ class TestSolution(unittest.TestCase):
     def test_optimum_ta50(self):
         # http://optimizizer.com/solution.php?name=ta50&UB=1923&problemclass=ta
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta50"
             },
@@ -7017,13 +7017,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -7037,7 +7037,7 @@ class TestSolution(unittest.TestCase):
 
     def test_optimum_ta51(self):
         env = gym.make(
-            "jss-v1",
+            "JSSEnv/JssEnv-v1",
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta51"
             },
@@ -7852,13 +7852,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, info = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, info =  env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
