@@ -32,6 +32,7 @@ setup(
         "codecov",
         "torch",
         "stable-baselines3[extra]",
+        "sb3-contrib",
         "swig",
         "gymnasium[box2d]"
     ],
