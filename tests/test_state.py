@@ -15,11 +15,15 @@ class TestState(unittest.TestCase):
         ).unwrapped
         average = 0
         for _ in range(100):
+            # IDK WHY STATE IS A TUPLE HERE
             state = env.reset(seed=42)
             self.assertEqual(env.current_time_step, 0)
             legal_actions = env.get_legal_actions()
             done = False
             total_reward = 0
+            if _ == 0:
+                print(state)
+                print(type(state))
             self.assertTrue(
                 max(state[0]["real_obs"].flatten()) <= 1.0, "Out of max bound state"
             )
@@ -43,6 +47,7 @@ class TestState(unittest.TestCase):
                 "machine available and nb machine available are not coherant",
             )
             while not done:
+                # IDK WHY STATE IS A DICTIONARY HERE
                 actions = np.random.choice(
                     len(legal_actions), 1, p=(legal_actions / legal_actions.sum())
                 )[0]
