@@ -2,6 +2,7 @@ import gymnasium as gym
 import unittest
 import numpy as np
 from pathlib import Path
+import JSSEnv
 
 
 class TestState(unittest.TestCase):
@@ -20,16 +21,16 @@ class TestState(unittest.TestCase):
             done = False
             total_reward = 0
             self.assertTrue(
-                max(state["real_obs"].flatten()) <= 1.0, "Out of max bound state"
+                max(state[0]["real_obs"].flatten()) <= 1.0, "Out of max bound state"
             )
             self.assertTrue(
-                min(state["real_obs"].flatten()) >= 0.0, "Out of min bound state"
+                min(state[0]["real_obs"].flatten()) >= 0.0, "Out of min bound state"
             )
             self.assertTrue(
-                not np.isnan(state["real_obs"]).any(), "NaN inside state rep!"
+                not np.isnan(state[0]["real_obs"]).any(), "NaN inside state rep!"
             )
             self.assertTrue(
-                not np.isinf(state["real_obs"]).any(), "Inf inside state rep!"
+                not np.isinf(state[0]["real_obs"]).any(), "Inf inside state rep!"
             )
             machines_available = set()
             for job in range(len(env.legal_actions[:-1])):
@@ -46,7 +47,7 @@ class TestState(unittest.TestCase):
                     len(legal_actions), 1, p=(legal_actions / legal_actions.sum())
                 )[0]
                 assert legal_actions[:-1].sum() == env.nb_legal_actions
-                state, rewards, done, _ = env.step(actions)
+                state, rewards, done, truncated, info = env.step(actions)
                 legal_actions = env.get_legal_actions()
                 total_reward += rewards
                 self.assertTrue(
