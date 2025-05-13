@@ -21,9 +21,6 @@ class TestState(unittest.TestCase):
             legal_actions = env.get_legal_actions()
             done = False
             total_reward = 0
-            if _ == 0:
-                print(state)
-                print(type(state))
             self.assertTrue(
                 max(state[0]["real_obs"].flatten()) <= 1.0, "Out of max bound state"
             )
