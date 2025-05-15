@@ -143,6 +143,12 @@ class JssEnv(gym.Env):
 
     def get_legal_actions(self):
         return self.legal_actions
+    
+    def action_masks(self):
+        """Return a 1-D bool array of length `action_space.n`.
+        `True`  → action is legal
+        `False` → action is illegal  (will be masked)"""
+        return self.legal_actions
 
     def reset(self, seed=None, options=None):
         """
