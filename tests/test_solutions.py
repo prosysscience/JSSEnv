@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import unittest
 from pathlib import Path
 
@@ -57,7 +57,7 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
@@ -753,13 +753,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -1449,13 +1449,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -2145,13 +2145,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -2841,13 +2841,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -3537,13 +3537,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -4233,13 +4233,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -4929,13 +4929,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -5625,13 +5625,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -6321,13 +6321,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -7017,13 +7017,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
@@ -7852,13 +7852,13 @@ class TestSolution(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        state, reward, done, _ = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
             if no_op and not done:
                 self.assertTrue(len(env.next_time_step) > 0, "step {}".format(step_nb))
                 previous_time_step = env.current_time_step
-                state, reward, done, _ = env.step(env.jobs)
+                state, reward, done, truncated, _ = env.step(env.jobs)
                 self.assertTrue(
                     env.current_time_step > previous_time_step,
                     "we increase the time step",
