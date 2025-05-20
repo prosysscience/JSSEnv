@@ -1,4 +1,19 @@
+import sys
 from setuptools import setup, find_packages
+
+# Define version-specific dependencies
+if sys.version_info >= (3, 11):
+    # For Python 3.11 and 3.12
+    NUMPY_REQUIREMENT = "numpy>=1.24.0"
+    PANDAS_REQUIREMENT = "pandas>=2.0.0"
+elif sys.version_info >= (3, 9):
+    # For Python 3.9 and 3.10
+    NUMPY_REQUIREMENT = "numpy>=1.20.0,<2.0.0"
+    PANDAS_REQUIREMENT = "pandas>=1.3.0,<2.1.0"
+else:
+    # For Python 3.8
+    NUMPY_REQUIREMENT = "numpy>=1.20.0,<1.24.0"
+    PANDAS_REQUIREMENT = "pandas>=1.3.0,<2.0.0"
 
 setup(
     name="JSSEnv",
@@ -21,8 +36,8 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "gymnasium>=0.29.1",
-        "numpy>=1.20.0,<1.24.0",
-        "pandas>=1.3.0,<2.1.0",
+        NUMPY_REQUIREMENT,
+        PANDAS_REQUIREMENT,
         "plotly",
         "imageio",
         "psutil",
