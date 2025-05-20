@@ -27,6 +27,10 @@ This repository is available as a pip package:
 pip install JSSEnv
 ```
 
+**Requirements**:
+- Python 3.8 or newer
+- numpy >= 1.20.0
+
 Once installed, the environment will be available in your OpenAi's gym environment and can be used to train a reinforcement learning agent:
 
 ```python
