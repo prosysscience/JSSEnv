@@ -29,7 +29,8 @@ pip install JSSEnv
 
 **Requirements**:
 - Python 3.8 or newer
-- numpy >= 1.20.0
+- numpy >= 1.20.0, < 1.24.0
+- pandas >= 1.3.0, < 2.1.0
 
 Once installed, the environment will be available in your OpenAi's gym environment and can be used to train a reinforcement learning agent:
 

@@ -21,8 +21,8 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "gymnasium>=0.29.1",
-        "pandas<2.1.0",
-        "numpy>=1.20.0",
+        "numpy>=1.20.0,<1.24.0",
+        "pandas>=1.3.0,<2.1.0",
         "plotly",
         "imageio",
         "psutil",
