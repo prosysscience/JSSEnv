@@ -24,7 +24,11 @@ Getting Started
 This repository is available as a pip package:
 
 ```shell
+# Install the package
 pip install JSSEnv
+
+# For development installation with test dependencies
+pip install -e ".[dev]"
 ```
 
 **Requirements**:

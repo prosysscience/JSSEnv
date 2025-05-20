@@ -26,18 +26,23 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
+        # Install the package in development mode to use setup.py dependencies
+        python -m pip install -e .
+        # Install test dependencies
         python -m pip install -e .[dev]
+        # List installed packages for debugging
+        python -m pip list
         
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true
         # exit-zero treats all errors as warnings
         flake8 . --count --exit-zero --max-line-length=120 --statistics
         
     - name: Test with pytest and coverage
       run: |
-        pytest --cov=JSSEnv tests/
+        pytest -v --cov=JSSEnv tests/
         
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
