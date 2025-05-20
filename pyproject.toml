@@ -22,14 +22,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "gymnasium>=0.29.1",
-    "plotly",
-    "imageio",
-    "psutil",
-    "requests",
-    "kaleido",
-]
+# Dependencies are handled in setup.py to allow for Python version-specific requirements
 
 [project.optional-dependencies]
 dev = [
