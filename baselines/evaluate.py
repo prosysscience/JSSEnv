@@ -14,7 +14,9 @@ except ImportError:
     # import sys
     # sys.exit(1)
 
-from . import RandomPolicy, SPTPolicy, SimulatedAnnealingPolicy
+from . import RandomPolicy, SPTPolicy, SimulatedAnnealingPolicy 
+from .lwkr_policy import LWKRPolicy
+from .critical_path_policy import CriticalPathPolicy
 from .utils import format_results_table
 
 # These are placeholder instance identifiers.
@@ -122,9 +124,11 @@ def main(instance_identifiers=None, num_runs_per_instance=3):
     policy_constructors = {
         "RandomPolicy": lambda env_instance: RandomPolicy(env_instance),
         "SPTPolicy": lambda env_instance: SPTPolicy(env_instance),
+        "LWKRPolicy": lambda env_instance: LWKRPolicy(env_instance),
+        "CriticalPathPolicy": lambda env_instance: CriticalPathPolicy(env_instance),
         "SimulatedAnnealingPolicy": lambda env_instance: SimulatedAnnealingPolicy(env_instance, **sa_config)
     }
-    policy_names_ordered = ["RandomPolicy", "SPTPolicy", "SimulatedAnnealingPolicy"]
+    policy_names_ordered = ["RandomPolicy", "SPTPolicy", "LWKRPolicy", "CriticalPathPolicy", "SimulatedAnnealingPolicy"]
 
 
     for instance_id in instance_identifiers:
