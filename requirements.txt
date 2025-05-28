@@ -1,0 +1,31 @@
+# Core dependencies
+setuptools
+wheel
+numpy
+gymnasium
+shimmy
+matplotlib
+pandas
+plotly
+imageio
+psutil
+requests
+kaleido
+
+# Testing dependencies
+pytest
+codecov
+
+# Machine Learning dependencies
+torch
+stable-baselines3[extra]
+sb3-contrib
+
+# Build dependencies
+swig
+
+# Additional gymnasium environments
+gymnasium[box2d]
+
+# Additional dependencies found in codebase
+colorama 

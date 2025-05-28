@@ -59,6 +59,11 @@ class SPTPolicy(BaselinePolicy):
         candidate_actions = []
 
         for job_idx in legal_job_indices:
+            # Skip actions that are beyond the real_obs bounds
+            # This handles cases where action space includes special actions (like no-op)
+            if job_idx >= real_obs.shape[0]:
+                continue
+                
             # ASSUMPTION: real_obs[job_idx][0] is the processing time of the
             # current operation for job_idx. This is a critical assumption.
             # If JSSEnv's real_obs has a different structure, this line MUST be updated.
@@ -68,9 +73,9 @@ class SPTPolicy(BaselinePolicy):
             # For now, proceeding with a common convention.
             
             # Check if real_obs has enough dimensions and elements
-            if real_obs.ndim == 2 and real_obs.shape[0] > job_idx and real_obs.shape[1] > 0:
+            if real_obs.ndim == 2 and real_obs.shape[1] > 0:
                 current_op_processing_time = real_obs[job_idx, 0] 
-            elif real_obs.ndim == 1 and real_obs.shape[0] > job_idx: 
+            elif real_obs.ndim == 1: 
                 # Fallback: if real_obs is 1D, assume it's a list of proc times for current ops
                 # This is less standard but a possible simple obs structure.
                 # Or, it could be that real_obs itself IS the processing time array.
@@ -91,6 +96,12 @@ class SPTPolicy(BaselinePolicy):
             elif current_op_processing_time == min_processing_time:
                 candidate_actions.append(job_idx)
         
+        # If no valid job actions found, fall back to any legal action
+        if not candidate_actions:
+            # This could happen if all legal actions are beyond real_obs bounds
+            # In this case, just pick any legal action
+            candidate_actions = legal_job_indices.tolist()
+            
         if not candidate_actions:
              # This could happen if all legal jobs have inf processing time (unlikely)
              # or if legal_job_indices was empty (handled above).
