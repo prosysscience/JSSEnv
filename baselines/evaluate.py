@@ -28,7 +28,13 @@ from .utils import format_results_table
 #    "path/to/instances/ta01.txt", 
 #    "path/to/instances/ft06.txt"
 # ] # If full paths are needed
-DEFAULT_INSTANCE_IDENTIFIERS = ["ta01", "ta02"] # Modify as needed
+DEFAULT_INSTANCE_IDENTIFIERS = [
+    "JSSEnv/envs/instances/ta01", 
+    "JSSEnv/envs/instances/ta02", 
+    "JSSEnv/envs/instances/ta03", 
+    "JSSEnv/envs/instances/ta04", 
+    "JSSEnv/envs/instances/ta05"
+] # Modify as needed
 
 def run_episode(env, policy, policy_name="Policy", seed=None):
     """
@@ -87,7 +93,16 @@ def run_episode(env, policy, policy_name="Policy", seed=None):
         step_count += 1
 
     runtime = time.time() - start_time
-    makespan = info.get('makespan', float('inf'))
+    
+    # Get makespan from environment after episode completion
+    if done:
+        # Access the underlying environment if wrapped
+        underlying_env = env
+        while hasattr(underlying_env, 'env'):
+            underlying_env = underlying_env.env
+        makespan = underlying_env.current_time_step
+    else:
+        makespan = float('inf')  # Episode didn't complete properly
     
     return {"makespan": makespan, "runtime": runtime}
 
@@ -137,7 +152,7 @@ def main(instance_identifiers=None, num_runs_per_instance=3):
         try:
             # Create environment: env_config structure depends on JSSEnv.
             # Common patterns: {'instance_path': path_to_file}, {'instance_name': name}
-            env = gym.make('jss-v1', env_config={'instance_path': instance_id})
+            env = gym.make('JSSEnv/JssEnv-v1', env_config={'instance_path': instance_id})
             # Or, if JSSEnv expects a name for bundled instances:
             # env = gym.make('jss-v1', env_config={'instance_name': instance_id})
         except Exception as e:
