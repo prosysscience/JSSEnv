@@ -149,6 +149,9 @@ evaluation_results/
 *_summary_*.json
 *_errors_*.txt
 
+# Training output folder
+output/
+
 # IDE files
 .vscode/
 .idea/
