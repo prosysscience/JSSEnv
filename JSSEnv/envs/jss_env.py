@@ -35,7 +35,7 @@ class JssEnv(gym.Env):
         """
         # Load instance data (jobs, machines, operation times)
         if env_config is None:
-            print(f"Getting instance data from: {Path(__file__).parent.absolute() / "instances" / "ta80"}")
+            print(f"Getting instance data from: {Path(__file__).parent.absolute() / 'instances' / 'ta80'}")
             env_config = {
                 "instance_path": Path(__file__).parent.absolute() / "instances" / "ta80"
             }

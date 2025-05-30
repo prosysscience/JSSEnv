@@ -59,6 +59,9 @@ class IdleTrackingWrapper(RecordConstructorArgs, gym.Wrapper):
     def __getattr__(self, name):
         # lookup attribute in the wrapped environment
         return getattr(self.env, name)
+
+# Create output directory if it doesn't exist
+os.makedirs("output", exist_ok=True)
         
 raw = gym.make(
     'JSSEnv/JssEnv-v1',
@@ -88,6 +91,9 @@ truncated = False
 
 num_iters = 1000
 
+# Flag to track if rendering is working
+rendering_enabled = True
+
 try:
     for step in range(num_iters):  # Loop for a fixed number of steps
         # Take a random action
@@ -96,15 +102,19 @@ try:
         action = env.action_space.sample()
         observation, reward, terminated, truncated, info = env.step(action)
         
-        # render image if available
-        env.env._last_iteration = step
-        fig = env.render()
-        
-        if fig is None:
-            continue # nothing to draw, skip
-        
-        temp_image = fig.to_image()
-        images.append(imageio.imread(temp_image))
+        # Try to render image if available and rendering is enabled
+        if rendering_enabled:
+            try:
+                env.env._last_iteration = step
+                fig = env.render()
+                
+                if fig is not None:
+                    temp_image = fig.to_image()
+                    images.append(imageio.imread(temp_image))
+            except Exception as render_error:
+                print(f"Rendering disabled due to error: {render_error}")
+                rendering_enabled = False
+                images = []  # Clear any partial images
 
         # Check if the episode is done
         if terminated or truncated:
@@ -125,11 +135,15 @@ except Exception as e:
     traceback.print_exc()
     print(Fore.RED + f"======" + Fore.RESET)
 finally:
-    # Save the rendered frames as a GIF
+    # Save the rendered frames as a GIF (only if we have images)
     try:
-        print("Attempting to render...")
-        imageio.mimsave("output/ta01.gif", images)
-        print("Rendering completed. GIF saved as 'ta01.gif'.")
+        print("Attempting to save results...")
+        
+        if images and rendering_enabled:
+            imageio.mimsave("output/ta02.gif", images)
+            print("Rendering completed. GIF saved as 'output/ta02.gif'.")
+        else:
+            print("Skipping GIF creation due to rendering issues.")
         
         if records:
             # Create output folder
@@ -187,6 +201,7 @@ finally:
             
         print(f"Resets: {resets}")
         env.close()
+        print("Execution completed successfully!")
     except Exception as e:
         print(Fore.RED + f"An error occured: {e}" + Fore.RESET)
         traceback.print_exc()

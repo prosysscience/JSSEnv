@@ -67,26 +67,114 @@ np.random.choice(len(legal_action), 1, p=(legal_action / legal_action.sum()))[0]
 Where `legal_action` is the array of legal action (i.e., `action_mask`).  
 This line of code will randomly sample one legal action from the `action_mask`.
 
+Baseline Policies
+-----------------
+
+This repository includes several baseline policies for Job Shop Scheduling that can be used for comparison and benchmarking:
+
+### Available Baselines
+
+1. **RandomPolicy** - Randomly selects from legal actions
+2. **SPTPolicy** - Shortest Processing Time dispatching rule
+3. **SimulatedAnnealingPolicy** - Metaheuristic optimization with configurable parameters
+
+### Quick Start with Baselines
+
+```python
+from baselines import RandomPolicy, SPTPolicy, SimulatedAnnealingPolicy
+
+# Create environment
+env = gym.make('JSSEnv/JssEnv-v1')
+
+# Initialize a baseline policy
+policy = RandomPolicy(env)
+# or
+policy = SPTPolicy(env)
+# or
+policy = SimulatedAnnealingPolicy(env, initial_temp=100.0, cooling_rate=0.95)
+
+# Use the policy
+obs, info = env.reset()
+action = policy.select_action(obs)
+```
+
+### Evaluation Framework
+
+We provide comprehensive evaluation scripts to test and compare baseline performance:
+
+#### Quick Functionality Test
+```bash
+python test_baselines.py
+```
+
+#### Performance Evaluation
+```bash
+# Quick evaluation
+python run_baseline_evaluation.py --quick --runs 3
+
+# Full evaluation with custom instances
+python run_baseline_evaluation.py --instances ta01 ta02 ft06 --runs 10
+
+# All options
+python run_baseline_evaluation.py --help
+```
+
+#### Results and Analysis
+
+The evaluation generates:
+- **CSV files** with detailed results for every run
+- **JSON summaries** with aggregated statistics
+- **Performance comparisons** across policies and instances
+- **Statistical analysis** including makespan, runtime, and success rates
+
+Example output:
+```
+🎯 Overall Performance Summary:
+Policy                    Avg_Makespan  Std_Makespan  Min_Makespan  Max_Makespan  Avg_Runtime  Success_Rate
+RandomPolicy                   703.000        45.230       650.000       780.000        0.086         1.000
+SPTPolicy                      740.670        32.150       695.000       785.000        0.356         1.000
+SA_Standard                    729.000         0.000       729.000       729.000        4.234         1.000
+```
+
+For detailed documentation on the evaluation framework, see [BASELINE_EVALUATION_README.md](BASELINE_EVALUATION_README.md).
+
 Project Organization
 ------------
 
-    ├── README.md             <- The top-level README for developers using this project.
+    ├── README.md                      <- The top-level README for developers using this project.
+    ├── BASELINE_EVALUATION_README.md  <- Detailed documentation for baseline evaluation
+    ├── requirements.txt               <- Python dependencies for baseline policies
+    ├── run_baseline_evaluation.py     <- Comprehensive baseline evaluation script
+    ├── test_baselines.py              <- Quick functionality tests for baselines
+    ├── debug_episode.py               <- Environment debugging utilities
+    │
+    ├── baselines/                     <- Baseline policy implementations
+    │   ├── __init__.py               <- Makes baselines a Python module
+    │   ├── base_policy.py            <- Abstract base class for policies
+    │   ├── random_policy.py          <- Random action selection policy
+    │   ├── spt_policy.py             <- Shortest Processing Time policy
+    │   ├── simulated_annealing_policy.py <- Simulated Annealing policy
+    │   ├── utils.py                  <- Utility functions for baselines
+    │   └── tests/                    <- Tests for baseline policies
+    │       ├── __init__.py
+    │       └── mock_env.py           <- Mock environment for testing
+    │
     ├── JSSEnv
-    │   └── envs              <- Contains the environment.
-    │       └── instances     <- Contains some intances from the litterature.
+    │   └── envs                      <- Contains the environment.
+    │       └── instances             <- Contains some instances from the literature.
     │
     └── tests                 
         │
-        ├── test_state.py     <- Unit tests focus on testing the state produced by
-        │                        the environment.
+        ├── test_state.py             <- Unit tests focus on testing the state produced by
+        │                                the environment.
         │
-        ├── test_rendering.py <- Unit tests for the rendering, mainly used as an example
-        |                        how to render the environment.
+        ├── test_rendering.py         <- Unit tests for the rendering, mainly used as an example
+        |                                how to render the environment.
         │
-        └── test_solutions.py <- Unit tests to ensure that our environment is correct checking
-                                 known solution in the litterature leads to the intended make-
-                                 span. We also check if all actions provided by the solution are
-                                 legal in our environment.
+        └── test_solutions.py         <- Unit tests to ensure that our environment is correct checking
+                                         known solution in the literature leads to the intended make-
+                                         span. We also check if all actions provided by the solution are
+                                         legal in our environment.
 --------
 
 ## Question/Need Support?
