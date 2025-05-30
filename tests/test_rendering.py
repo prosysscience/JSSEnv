@@ -12,7 +12,7 @@ class TestRendering(unittest.TestCase):
             env_config={
                 "instance_path": f"{str(Path(__file__).parent.absolute())}/../JSSEnv/envs/instances/ta01"
             },
-        )
+        ).unwrapped
         env.reset(seed=42)
         
         self.assertEqual(env.current_time_step, 0)
@@ -82,7 +82,7 @@ class TestRendering(unittest.TestCase):
         self.assertEqual(env.current_time_step, 0)
 
 
-# ## renders even if assersts fail.
+# ## renders even if asserts fail.
 # import gymnasium as gym
 # import unittest
 # import imageio.v2 as imageio
