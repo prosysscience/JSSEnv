@@ -1,5 +1,5 @@
-# from gym.envs.registration import register
-from JSSEnv.envs.jss_env import JssEnv
+__version__ = "1.1.0"
+
 from gymnasium.envs.registration import register
 
 register(

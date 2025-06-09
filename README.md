@@ -1,4 +1,4 @@
-Job-Shop Scheduling Environment [![Build Status](https://travis-ci.com/prosysscience/JSSEnv.svg?token=bPABRGzbzQ2JTRTjgRJn&branch=master)](https://travis-ci.com/prosysscience/JSSEnv)
+Job-Shop Scheduling Environment [![Tests](https://github.com/prosysscience/JSSEnv/actions/workflows/python-tests.yml/badge.svg)](https://github.com/prosysscience/JSSEnv/actions/workflows/python-tests.yml)
 ==============================
 
 An optimized OpenAi gym's environment to simulate the [Job-Shop Scheduling problem](https://developers.google.com/optimization/scheduling/job_shop).
@@ -24,17 +24,44 @@ Getting Started
 This repository is available as a pip package:
 
 ```shell
+# Install the package
 pip install JSSEnv
+
+# For development installation with test dependencies
+pip install -e ".[dev]"
 ```
+
+**Requirements**:
+- Python 3.8 or newer
+- Dependencies are automatically selected based on your Python version:
+  - Python 3.8: numpy >= 1.20.0, < 1.24.0 and pandas >= 1.3.0, < 2.0.0
+  - Python 3.9-3.10: numpy >= 1.20.0, < 2.0.0 and pandas >= 1.3.0, < 2.1.0
+  - Python 3.11-3.12: numpy >= 1.24.0 and pandas >= 2.0.0
 
 Once installed, the environment will be available in your OpenAi's gym environment and can be used to train a reinforcement learning agent:
 
 ```python
 import gymnasium as gym
-import JSSEnv # an ongoing issue with OpenAi's gym causes it to not import automatically external modules, see: https://github.com/openai/gym/issues/2809
-# for older version of gym, you have to use 
-# env = gym.make('JSSEnv:jss-v1', env_config={'instance_path': 'INSTANCE_PATH'})
+import JSSEnv
 env = gym.make('jss-v1', env_config={'instance_path': 'INSTANCE_PATH'})
+
+# Full example with a random agent
+obs = env.reset()
+done = False
+cum_reward = 0
+
+while not done:
+    # Get legal actions from action mask
+    legal_actions = obs["action_mask"]
+    
+    # Choose a random legal action
+    action = np.random.choice(
+        len(legal_actions), 1, p=(legal_actions / legal_actions.sum())
+    )[0]
+    
+    # Take action in environment
+    obs, reward, done, truncated, _ = env.step(action)
+    cum_reward += reward
 ```
 
 ### Important: Your instance must follow [Taillard's specification](http://jobshop.jjvh.nl/explanation.php#taillard_def). 
@@ -43,12 +70,14 @@ env = gym.make('jss-v1', env_config={'instance_path': 'INSTANCE_PATH'})
 How To Use
 ------------
 
-The observation provided by the environment contains both a boolean array indicating if the action is legal or not and the "real" observation
+### Basic Usage
+
+The observation provided by the environment contains both a boolean array indicating if the action is legal or not and the "real" observation:
 
 ```python 
 self.observation_space = gym.spaces.Dict({
             "action_mask": gym.spaces.Box(0, 1, shape=(self.jobs + 1,)),
-            "real_obs": gym.spaces.Box(low=0.0, high=1.0, shape=(self.jobs, 7), dtype=np.float),
+            "real_obs": gym.spaces.Box(low=0.0, high=1.0, shape=(self.jobs, 7), dtype=float),
         })
 ```
 
@@ -67,76 +96,106 @@ np.random.choice(len(legal_action), 1, p=(legal_action / legal_action.sum()))[0]
 Where `legal_action` is the array of legal action (i.e., `action_mask`).  
 This line of code will randomly sample one legal action from the `action_mask`.
 
-Baseline Policies
------------------
 
-This repository includes several baseline policies for Job Shop Scheduling that can be used for comparison and benchmarking:
+### Using Dispatching Rules
 
-### Available Baselines
-
-1. **RandomPolicy** - Randomly selects from legal actions
-2. **SPTPolicy** - Shortest Processing Time dispatching rule
-3. **SimulatedAnnealingPolicy** - Metaheuristic optimization with configurable parameters
-
-### Quick Start with Baselines
+The package includes common dispatching rules for job shop scheduling that can be used as baselines or heuristics:
 
 ```python
-from baselines import RandomPolicy, SPTPolicy, SimulatedAnnealingPolicy
+import gymnasium as gym
+import JSSEnv
+from JSSEnv.dispatching import get_rule, compare_rules
 
 # Create environment
-env = gym.make('JSSEnv/JssEnv-v1')
+env = gym.make('jss-v1', env_config={'instance_path': 'PATH_TO_INSTANCE'})
 
-# Initialize a baseline policy
-policy = RandomPolicy(env)
-# or
-policy = SPTPolicy(env)
-# or
-policy = SimulatedAnnealingPolicy(env, initial_temp=100.0, cooling_rate=0.95)
+# Get a specific dispatching rule
+spt_rule = get_rule("SPT")  # Shortest Processing Time rule
 
-# Use the policy
-obs, info = env.reset()
-action = policy.select_action(obs)
+# Run an episode with the rule
+env.reset()
+done = False
+total_reward = 0
+
+while not done:
+    # The rule selects an action based on the current environment state
+    action = spt_rule(env)
+    
+    # Take the action in the environment
+    obs, reward, done, truncated, _ = env.step(action)
+    total_reward += reward
+
+print(f"Makespan: {env.current_time_step}, Total reward: {total_reward}")
+
+# Visualize the schedule
+gantt_chart = env.render()
 ```
 
-### Evaluation Framework
+#### Available Dispatching Rules
 
-We provide comprehensive evaluation scripts to test and compare baseline performance:
+- **SPT** (Shortest Processing Time): Schedules the job with the shortest processing time for its current operation
+- **FIFO** (First-In-First-Out): Schedules the job that has been waiting the longest
+- **MWR** (Most Work Remaining): Schedules the job with the most total processing time remaining
+- **LWR** (Least Work Remaining): Schedules the job with the least total processing time remaining
+- **MOR** (Most Operations Remaining): Schedules the job with the most operations remaining
+- **LOR** (Least Operations Remaining): Schedules the job with the fewest operations remaining
+- **CR** (Critical Ratio): Schedules based on the ratio of time to due date versus remaining work
 
-#### Quick Functionality Test
+#### Comparing Multiple Rules
+
+You can compare multiple dispatching rules on your instance:
+
+```python
+# Compare all available rules
+results = compare_rules(env, num_episodes=5)
+
+# Print results
+for rule_name, metrics in results.items():
+    print(f"{rule_name}: Avg Reward = {metrics['avg_reward']:.2f}, Avg Makespan = {metrics['avg_makespan']:.2f}")
+```
+
+For a complete example, see the `examples/dispatching_rules_example.py` file.
+
+### Generating Visualization GIFs
+
+To create animated GIFs of your schedules like the one shown at the top of this README, you can use the following code:
+
+```python
+import gymnasium as gym
+import JSSEnv
+import imageio
+
+# Create environment
+env = gym.make('jss-v1', env_config={'instance_path': 'PATH_TO_INSTANCE'})
+env.reset()
+
+# Initialize list to store images
+images = []
+
+# Run your scheduling algorithm
+done = False
+while not done:
+    # Your scheduling logic to choose an action
+    action = your_scheduling_algorithm(env)
+    
+    # Take the action
+    obs, reward, done, truncated, _ = env.step(action)
+    
+    # Render and capture the current state as an image
+    temp_image = env.render().to_image()
+    images.append(imageio.imread(temp_image))
+
+# Save the images as an animated GIF
+imageio.mimsave("schedule.gif", images)
+```
+
+This will create a GIF that shows how your schedule evolves step by step. You can adjust the GIF quality and frame rate by using additional parameters in `imageio.mimsave()`.
+
+Note: To use this feature, make sure you have the `imageio` package installed:
+
 ```bash
-python test_baselines.py
+pip install imageio
 ```
-
-#### Performance Evaluation
-```bash
-# Quick evaluation
-python run_baseline_evaluation.py --quick --runs 3
-
-# Full evaluation with custom instances
-python run_baseline_evaluation.py --instances ta01 ta02 ft06 --runs 10
-
-# All options
-python run_baseline_evaluation.py --help
-```
-
-#### Results and Analysis
-
-The evaluation generates:
-- **CSV files** with detailed results for every run
-- **JSON summaries** with aggregated statistics
-- **Performance comparisons** across policies and instances
-- **Statistical analysis** including makespan, runtime, and success rates
-
-Example output:
-```
-🎯 Overall Performance Summary:
-Policy                    Avg_Makespan  Std_Makespan  Min_Makespan  Max_Makespan  Avg_Runtime  Success_Rate
-RandomPolicy                   703.000        45.230       650.000       780.000        0.086         1.000
-SPTPolicy                      740.670        32.150       695.000       785.000        0.356         1.000
-SA_Standard                    729.000         0.000       729.000       729.000        4.234         1.000
-```
-
-For detailed documentation on the evaluation framework, see [BASELINE_EVALUATION_README.md](BASELINE_EVALUATION_README.md).
 
 Project Organization
 ------------

@@ -1,0 +1,95 @@
+name: Python Tests
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Install dependencies
+      run: |
+        # Upgrade pip and core tools
+        python -m pip install --upgrade pip setuptools wheel
+        
+        # Install gymnasium explicitly first
+        python -m pip install gymnasium==0.29.1
+        
+        # Install numpy and pandas (version depends on Python version)
+        if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
+          python -m pip install "numpy>=1.20.0,<1.24.0" "pandas>=1.3.0,<2.0.0"
+        elif [[ "${{ matrix.python-version }}" == "3.9" || "${{ matrix.python-version }}" == "3.10" ]]; then
+          python -m pip install "numpy>=1.20.0,<2.0.0" "pandas>=1.3.0,<2.1.0"
+        else
+          python -m pip install "numpy>=1.24.0" "pandas>=2.0.0"
+        fi
+        
+        # Install other core dependencies
+        python -m pip install plotly imageio psutil requests kaleido
+        
+        # Install development dependencies
+        python -m pip install pytest pytest-cov flake8 codecov
+        
+        # Finally install the package in development mode
+        python -m pip install -e .
+        
+        # List installed packages for debugging
+        python -m pip list
+        
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true
+        # exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-line-length=120 --statistics
+        
+    - name: Test with pytest and coverage
+      run: |
+        pytest -v --cov=JSSEnv tests/
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        fail_ci_if_error: false
+
+  build-package:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install build
+        
+    - name: Build package
+      run: |
+        python -m build
+        
+    - name: Store build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/

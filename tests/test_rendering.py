@@ -65,7 +65,7 @@ class TestRendering(unittest.TestCase):
                         self.assertEqual(
                             sum(env.legal_actions[:-1]), env.nb_legal_actions
                         )
-                        observation, reward, terminated, truncated, info = env.step(action_to_do)
+                        state, reward, done, truncated, _ = env.step(action_to_do)
                         index_machine[machine] += 1
                         step_nb += 1
                         

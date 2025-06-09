@@ -49,7 +49,7 @@ class TestState(unittest.TestCase):
                     len(legal_actions), 1, p=(legal_actions / legal_actions.sum())
                 )[0]
                 assert legal_actions[:-1].sum() == env.nb_legal_actions
-                state, rewards, done, truncated, info = env.step(actions)
+                state, rewards, done, truncated, _ = env.step(actions)
                 legal_actions = env.get_legal_actions()
                 total_reward += rewards
                 self.assertTrue(
